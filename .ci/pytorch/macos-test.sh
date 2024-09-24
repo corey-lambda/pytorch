@@ -154,8 +154,8 @@ test_torchbench_perf() {
   print_cmake_info
 
   echo "Launching torchbench setup"
-  make -C $(pwd)/benchmarks/dynamo clone-deps
-  make -C $(pwd)/benchmarks/dynamo pull-deps
+  make -C $(pwd)/benchmarks/dynamo clone-deps-macos
+  make -C $(pwd)/benchmarks/dynamo pull-deps-macos
   make -C $(pwd)/benchmarks/dynamo build-deps-macos
 
   TEST_REPORTS_DIR=$(pwd)/test/test-reports
