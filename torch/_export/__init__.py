@@ -55,6 +55,17 @@ class ExportDynamoConfig:
     allow_rnn: bool = True
 
 
+class _DeprecatedIRGraphModule(torch.fx.GraphModule):
+    """
+    A dummy class used to tag that the deprecated capture_pre_autograd_graph API
+    is called to create this graph module. export.export_for_training should be used
+    instead.
+
+    TODO: clean up this code after training IR migration.
+    See NOTE [training ir has no getitem for bn node].
+    T199018392
+    """
+
 # We only want to print this once to avoid flooding logs in workflows where capture_pre_autograd_graph
 # is called multiple times.
 @lru_cache
@@ -72,6 +83,19 @@ def capture_pre_autograd_graph_warning():
 @lru_cache
 def print_export_warning():
     log.warning("Using torch.export.export_for_training(...,strict=True)")
+
+def gm_using_training_ir(graph_module):
+    has_training_ir_batch_norm = False
+    has_deprecated_ir_tag = isinstance(graph_module, _DeprecatedIRGraphModule)
+    for node in graph_module.graph.nodes:
+        if node.op == "call_function":
+            if node.target == torch.ops.aten.batch_norm.default:
+                has_training_ir_batch_norm = True
+                break
+
+    if has_deprecated_ir_tag and has_training_ir_batch_norm:
+        raise RuntimeError("Conflicting IR detected.")
+    return has_training_ir_batch_norm or not has_deprecated_ir_tag
 
 @compatibility(is_backward_compatible=False)
 def capture_pre_autograd_graph(
@@ -183,6 +207,8 @@ def capture_pre_autograd_graph(
                 m,
                 range_constraints=range_constraints,
             )
+
+            module.__class__ = _DeprecatedIRGraphModule
 
     error_message = \
         """
