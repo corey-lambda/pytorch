@@ -81,6 +81,14 @@ class TestCompiledAutograd(TestCase):
         config.compiled_autograd = False
         compiled_autograd.reset()
 
+    @classmethod
+    def setUpClass(cls):
+        torch.testing._internal.common_utils.remove_cpp_extensions_build_root()
+
+    @classmethod
+    def tearDownClass(cls):
+        torch.testing._internal.common_utils.remove_cpp_extensions_build_root()
+
     def check_output_and_recompiles(
         self, fn, count=1, compiler_fn=compiler_fn, compile_fn=False
     ):
@@ -1611,7 +1619,6 @@ TORCH_LIBRARY(test_non_traceable_autograd_cpp_node, m) {
         ), compiled_autograd.enable(compiler_fn):
             fn()
 
-    @unittest.skip("Flaky, cache from test ordering affects test. #135369")
     def test_autograd_cpp_node(self):
         cpp_source = """
 struct CustomOpAutogradFunction : public torch::autograd::Function<CustomOpAutogradFunction> {
