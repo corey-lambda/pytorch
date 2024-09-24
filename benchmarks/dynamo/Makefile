@@ -3,14 +3,14 @@ PIP ?= python -m pip
 
 clone-deps:
 	(cd ../../.. \
-		&& (test -e torchvision || git clone --recursive https://github.com/pytorch/vision torchvision) \
-		&& (test -e torchdata || git clone --recursive https://github.com/pytorch/data.git torchdata) \
-		&& (test -e torchtext || git clone --recursive https://github.com/pytorch/text torchtext) \
-		&& (test -e torchaudio || git clone --recursive https://github.com/pytorch/audio torchaudio) \
-		&& (test -e detectron2 || git clone --recursive https://github.com/facebookresearch/detectron2) \
-		&& (test -e FBGEMM || git clone --recursive https://github.com/pytorch/FBGEMM) \
-		&& (test -e torchrec || git clone --recursive https://github.com/pytorch/torchrec) \
-		&& (test -e torchbenchmark || git clone --recursive https://github.com/pytorch/benchmark torchbenchmark) \
+		&& (test -e torchvision || git clone --recursive --remote https://github.com/pytorch/vision torchvision) \
+		&& (test -e torchdata || git clone --recursive --remote https://github.com/pytorch/data.git torchdata) \
+		&& (test -e torchtext || git clone --recursive --remote https://github.com/pytorch/text torchtext) \
+		&& (test -e torchaudio || git clone --recursive --remote https://github.com/pytorch/audio torchaudio) \
+		&& (test -e detectron2 || git clone --recursive --remote https://github.com/facebookresearch/detectron2) \
+		&& (test -e FBGEMM || git clone --recursive --remote https://github.com/pytorch/FBGEMM) \
+		&& (test -e torchrec || git clone --recursive --remote https://github.com/pytorch/torchrec) \
+		&& (test -e torchbenchmark || git clone --recursive --remote https://github.com/pytorch/benchmark torchbenchmark) \
 	)
 
 pull-deps: clone-deps
