@@ -805,8 +805,10 @@ class OpOverload(OperatorBase):
                     else:
                         return self._op_dk(key, *args, **kwargs)
 
+
                 with torch.utils._python_dispatch._pop_mode_temporarily() as mode:
                     return self.python_key_table[curr_mode](mode, *args, **kwargs)
+
 
             self._dispatch_cache[key] = handler
             add_cached_op(self)
