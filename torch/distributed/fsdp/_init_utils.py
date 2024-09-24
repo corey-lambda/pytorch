@@ -1032,11 +1032,13 @@ def _move_states_to_device(
         # `nn.Module._apply()`, which underlies `nn.Module.to()`
         for param in params:
             with torch.no_grad():
-                param.data = param.to(device_from_device_id)
+                param.data = param.to(device_from_device_id, non_blocking=True)
                 if param.grad is not None:
-                    param.grad.data = param.grad.to(device_from_device_id)
+                    param.grad.data = param.grad.to(device_from_device_id, non_blocking=True)
         for buffer in buffers:
-            buffer.data = buffer.to(device_from_device_id)
+            buffer.data = buffer.to(device_from_device_id, non_blocking=True)
+        if device_from_device_id.type == "cuda":
+            torch.cuda.synchronize(device_from_device_id)
     elif current_device == cpu_device:  # type: ignore[possibly-undefined]
         _warn_cpu_init()
 
