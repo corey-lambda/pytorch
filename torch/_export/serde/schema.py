@@ -27,6 +27,7 @@ class ScalarType(IntEnum):
     COMPLEXDOUBLE = 11
     BOOL = 12
     BFLOAT16 = 13
+    UNSIGNED_SHORT = 14
 
 
 class Layout(IntEnum):
